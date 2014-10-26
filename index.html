@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Temperatures in Twente, The Netherlands</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Temperatures in Twente, The Netherlands">
+  <meta name="author" content="">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Temperatures in Twente, The Netherlands</h1>
+    <h2>Creating a Shiny App</h2>
+    <p><br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Goals of the Shiny App</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li>Displaying a graph of temperatures in a given year in Twente, a location in The Netherlands</li>
+<li>Using a public data source of temperatures in The Netherlands</li>
+<li>Easy online access to the temperature data: <a href="https://underminer.shinyapps.io/temperatures/">https://underminer.shinyapps.io/temperatures/</a></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Data extraction and loading</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Data is from the ROYAL NETHERLANDS METEOROLOGICAL INSTITUTE (KNMI): <a href="http://www.knmi.nl">http://www.knmi.nl</a></p>
+
+<p>The data was loaded and extracted using the following R-code:</p>
+
+<pre><code class="r">download.file(&quot;http://www.knmi.nl/klimatologie/daggegevens/datafiles3/290/etmgeg_290.zip&quot;, 
+              &quot;etmgeg_290.zip&quot;, method=&quot;curl&quot;)
+unzip(&quot;etmgeg_290.zip&quot;)
+weather &lt;- read.csv(&quot;etmgeg_290.txt&quot;, skip=49)
+weather[,42] &lt;- NULL
+names(weather) &lt;- c(&quot;STN&quot;,&quot;YYYYMMDD&quot;,&quot;DDVEC&quot;,&quot;FHVEC&quot;,&quot;FG&quot;,&quot;FHX&quot;,&quot;FHXH&quot;,
+                    &quot;FHN&quot;,&quot;FHNH&quot;,&quot;FXX&quot;,&quot;FXXH&quot;,&quot;TG&quot;,&quot;TN&quot;,&quot;TNH&quot;,&quot;TX&quot;,&quot;TXH&quot;,
+                    &quot;T10N&quot;,&quot;T10NH&quot;,&quot;SQ&quot;,&quot;SP&quot;,&quot;Q&quot;,&quot;DR&quot;,&quot;RH&quot;,&quot;RHX&quot;,&quot;RHXH&quot;,
+                    &quot;PG&quot;,&quot;PX&quot;,&quot;PXH&quot;,&quot;PN&quot;,&quot;PNH&quot;,&quot;VVN&quot;,&quot;VVNH&quot;,&quot;VVX&quot;,&quot;VVXH&quot;,
+                    &quot;NG&quot;,&quot;UG&quot;,&quot;UX&quot;,&quot;UXH&quot;,&quot;UN&quot;,&quot;UNH&quot;,&quot;EV24&quot;)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Data cleaning</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>We are only interested in the temperature columns (TG = average, TN = minimum, TX = maximum):</p>
+
+<pre><code class="r">temperatures &lt;- weather[,c(&quot;YYYYMMDD&quot;, &quot;TG&quot;, &quot;TN&quot;, &quot;TX&quot;)]
+names(temperatures) &lt;- c(&quot;date&quot;, &quot;avg&quot;, &quot;min&quot;, &#39;max&#39;)
+# Temperatures are in 0.1 degrees Celsius, convert it to degrees Celsius
+temperatures[,2:4] &lt;- temperatures[,2:4] / 10
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>The Shiny app</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Input on the left, output on the right:</p>
+
+<!-- Limit image width and height -->
+
+<style type="text/css">
+img {     
+  max-height: 500px;     
+  max-width: 964px; 
+}
+</style>
+
+<p><img src="assets/img/screenshot.png" alt="App"></p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Goals of the Shiny App'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Data extraction and loading'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Data cleaning'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='The Shiny app'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
